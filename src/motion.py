@@ -77,8 +77,39 @@ def rotate(angular_speed_degree, relative_angle_degree, clockwise):
     velocity.angular.z = 0
     velocity_pub.publish(velocity)
 
+def go_to_goal(x_dest, y_dest):
+    global x,y,z, angle
+    velocity_msg=Twist()
+    cmd_vel='/turtle1/cmd_vel'
 
-if __name__ == "__main__":
+    while(True):
+        k_linear = 0.5
+        distance = abs(math.sqrt((x_dest-x)**2)+((y_dest-y)**2))
+        linearSpeed = k_linear * distance
+
+        k_angular = 4.0
+        angular_distance = math.atan2(y_dest-y,x_dest-x) - angle
+        ang_speed = k_angular * angular_distance
+
+        velocity_msg.linear.x = linearSpeed
+        velocity_msg.angular.z = ang_speed
+
+        velocity_pub.publish(velocity_msg)
+        print("x= ",x," y= ",y)
+
+        if distance< 0.01:
+            break
+
+def set_desired_orientation(desired_angle_degrees):
+    relative_angle_degree = math.radians(abs(desired_angle_degrees))-angle
+    if relative_angle_degree < 0:
+        clockwise = 1
+    else:
+        clockwise = 0
+    rotate(30,math.degrees(abs(relative_angle_degree)),clockwise)
+
+
+if __name__=="__main__":
     try:
         rospy.init_node('turtle_cleaner',anonymous=True)
         cmd_vel='/turtle1/cmd_vel'
@@ -86,7 +117,9 @@ if __name__ == "__main__":
         position = '/turtle1/pose'
         pose_sub = rospy.Subscriber(position,Pose,poseCallBack)
         time.sleep(2)
-        rotate(30, 90, False)
+        go_to_goal(1.0,1.0)
+        #rotate(30, 90, False)
+        set_desired_orientation(90)
     except rospy.ROSInterruptException:
         rospy.loginfo("Node terminated")
         exit(0)
