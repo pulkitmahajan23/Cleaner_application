@@ -21,8 +21,7 @@ def poseCallBack(poseMessage):
 def move(speed, distance, isForward):
     velocity = Twist()
     global x, y
-    x0 = x
-    y0 = y
+
     if (isForward):
         velocity.linear.x = abs(speed)
     else:
@@ -56,7 +55,6 @@ def rotate(angular_speed_degree, relative_angle_degree, clockwise):
     velocity.angular.y = 0
     velocity.angular.z = 0
 
-    angle0 = angle
     angular_speed = math.radians(abs(angular_speed_degree))
     if(clockwise):
         velocity.angular.z = -abs(angular_speed)

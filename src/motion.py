@@ -121,7 +121,6 @@ if __name__=="__main__":
         #rotate(30, 90, False)
         set_desired_orientation(90)
         move(1.5,10,True)
-        rotate(30, 90, False)
     except rospy.ROSInterruptException:
         rospy.loginfo("Node terminated")
         exit(0)
