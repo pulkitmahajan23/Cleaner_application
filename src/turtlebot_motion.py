@@ -2,7 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Twist
-from turtlesim.msg import Pose
+from geometry_msgs.msg import PoseWithCovarianceStamped
 import math
 import time
 
@@ -117,11 +117,11 @@ if __name__=="__main__":
         cmd_vel='/cmd_vel'
         velocity_pub = rospy.Publisher(cmd_vel,Twist,queue_size=10)
         position = '/initialpose'
-        pose_sub = rospy.Subscriber(position,Pose,poseCallBack)
+        pose_sub = rospy.Subscriber(position,PoseWithCovarianceStamped,poseCallBack)
         time.sleep(2)
         #go_to_goal(1.0,1.0)
         #rotate(30, 90, False)
-        set_desired_orientation(90)
+        #set_desired_orientation(90)
         move(1.5,10,True)
         time.sleep(1.0)
         rotate(30, 90, False)
