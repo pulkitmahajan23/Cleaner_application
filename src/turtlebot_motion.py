@@ -30,13 +30,15 @@ def move(speed, distance, isForward):
     
     distance_moved = 0.0
     loopRate = rospy.Rate(10)
-    cmd_vel = '/turtle1/cmd_vel'
+    cmd_vel = '/cmd_vel'
     velocity_pub = rospy.Publisher(cmd_vel, Twist, queue_size=10)
+    t0=rospy.Time.now().to_sec()
     while True:
         rospy.loginfo('Moving')
         velocity_pub.publish(velocity)
         loopRate.sleep()
-        distance_moved = distance_moved +abs(0.5 * math.sqrt(((x-x0)**2)+((y-y0)**2)))
+        t1=rospy.Time.now().to_sec()
+        distance_moved = (t1-t0)*speed
         print(distance_moved)
         if not (distance_moved<distance):
             rospy.loginfo("Reached destination")
@@ -62,7 +64,7 @@ def rotate(angular_speed_degree, relative_angle_degree, clockwise):
         velocity.angular.z = abs(angular_speed)
     angle_moved = 0.0
     loopRate = rospy.Rate(10)
-    cmd_vel = '/turtle1/cmd_vel'
+    cmd_vel = '/cmd_vel'
     velocity_pub = rospy.Publisher(cmd_vel, Twist, queue_size=10)
     t0 = rospy.Time.now().to_sec()
     while True:
@@ -80,7 +82,7 @@ def rotate(angular_speed_degree, relative_angle_degree, clockwise):
 def go_to_goal(x_dest, y_dest):
     global x,y,z, angle
     velocity_msg=Twist()
-    cmd_vel='/turtle1/cmd_vel'
+    cmd_vel='/cmd_vel'
 
     while(True):
         k_linear = 0.5
@@ -112,15 +114,16 @@ def set_desired_orientation(desired_angle_degrees):
 if __name__=="__main__":
     try:
         rospy.init_node('turtle_cleaner',anonymous=True)
-        cmd_vel='/turtle1/cmd_vel'
+        cmd_vel='/cmd_vel'
         velocity_pub = rospy.Publisher(cmd_vel,Twist,queue_size=10)
-        position = '/turtle1/pose'
+        position = '/initialpose'
         pose_sub = rospy.Subscriber(position,Pose,poseCallBack)
         time.sleep(2)
         #go_to_goal(1.0,1.0)
         #rotate(30, 90, False)
         set_desired_orientation(90)
         move(1.5,10,True)
+        time.sleep(1.0)
         rotate(30, 90, False)
     except rospy.ROSInterruptException:
         rospy.loginfo("Node terminated")
